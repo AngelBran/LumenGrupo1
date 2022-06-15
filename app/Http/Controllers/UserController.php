@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+
 use App\Http\Requests\RegistroRequest;
 use App\Http\Requests\LoginRequest;
 use Carbon\Carbon;
@@ -178,12 +179,15 @@ class UserController extends Controller
         //
     }
 
+
     function email($email, $password, $names, $code){
         $mail = new PHPMailer(true);
 
         try {
             //Server settings
+
             #$mail->SMTPDebug = SMTP::DEBUG_SERVER;
+
             //Enable verbose debug output
             $mail->isSMTP();                                      //Send using SMTP
             $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
@@ -195,6 +199,7 @@ class UserController extends Controller
 
             //Recipients
             $mail->setFrom('bootcampproyecto@gmail.com');
+
             $mail->addAddress($email, $names);
             
             //Content
