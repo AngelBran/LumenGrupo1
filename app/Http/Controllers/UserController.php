@@ -5,6 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 
+// Email
+// require 'vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+
 
 class UserController extends Controller
 {
@@ -106,4 +113,36 @@ class UserController extends Controller
     {
         //
     }
+
+    public function email($email){
+        $mail = new PHPMailer(true);
+
+        try {
+            //Server settings
+            $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+            //Enable verbose debug output
+            $mail->isSMTP();                                      //Send using SMTP
+            $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+            $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+            $mail->Username   = 'bootcampproyecto@gmail.com';                     //SMTP username
+            $mail->Password   = 'lwsksotsietdlkxk';                               //SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+            $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+            //Recipients
+            $mail->setFrom('bootcampproyecto@gmail.com');
+            $mail->addAddress('cr.luisfernando09@gmail.com', 'Luis Cruz');
+            // $mail->addAddress('cr.luisfernando09@gmail.com', 'Luis Cruz');
+            
+            //Content
+            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->Subject = 'uwu ._.';
+            $mail->Body    = 'Voy pasando ._.';
+
+            $mail->send();
+            echo 'Message has been sent';
+        } catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        }
+            } 
 }
