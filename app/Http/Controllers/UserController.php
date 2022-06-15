@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Requests\RegistroRequest;
+use App\Http\Requests\LoginRequest;
+use Carbon\Carbon;
 // Email
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -87,6 +89,48 @@ class UserController extends Controller
         $this->email($users->email, $password, $users->names . " " . $users->lastnames, $users->code);
 
         return $users;
+    }
+
+    public function login(LoginRequest $request)
+    {
+        $validated = $request->validated();
+
+        $user = User::where('email', $request->email)->first();
+        
+        if ($user == NULL || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => "Usuario no encontrado. Verifique sus credenciales."
+            ], 401);
+        }
+
+        // $user = $request->user();
+        $tokenResult = $user->createToken('Personal Access Token');
+        $token = $tokenResult->token;
+
+        $token->save();
+
+        return response()->json([
+            'access_token' => $tokenResult->accessToken,
+            'token_type' => 'Bearer',
+            'expires_at' => Carbon::parse(
+                $tokenResult->token->expires_at
+            )->toDateTimeString()
+        ], 200);
+    }
+
+    public function profile(Request $request)
+    {
+        $user = $request->user();
+        return $user;
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+
+        return response()->json([
+            'message' => 'Cierre de sesión exitoso'
+        ], 200);
     }
 
     /**
