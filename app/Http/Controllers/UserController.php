@@ -44,31 +44,21 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $users = new User();
-        function Codigo() { 
+
+        function code($num) { 
             $chars = "abcdefghijkmnopqrstuvwxyz023456789"; 
             srand((double)microtime()*1000000); 
             $i = 0; 
             $codigo = '' ; 
-            while ($i <= 9) { 
+            
+            while ($i <= $num) { 
                 $num = rand() % 33; 
                 $tmp = substr($chars, $num, 1); 
                 $codigo = $codigo . $tmp; 
                 $i++; 
-                } 
-                return $codigo;
-        }
-        function Password() { 
-            $chars = "abcdefghijkmnopqrstuvwxyz023456789"; 
-            srand((double)microtime()*1000000); 
-            $i = 0; 
-            $password = '' ; 
-            while ($i <= 7) { 
-                $num = rand() % 33; 
-                $tmp = substr($chars, $num, 1); 
-                $password= $password . $tmp;
-                $i++; 
-                } 
-                return $password;
+            } 
+
+            return $codigo;
         }
       
         $users->names = $request->names;
@@ -77,14 +67,12 @@ class UserController extends Controller
         $users->email = $request->email;
         $users->birthday= $request->birthday;
         $users->phone = $request->phone;
-        $users->password = Password();
-        $users->code = Codigo();
+        $users->password = code(10);
+        $users->code = code(7);
         $users->register_status = 0;
         $users->save();
 
         return $users;
-
-
     }
 
     /**
