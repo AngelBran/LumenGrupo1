@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-
+// Email
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 
 class UserController extends Controller
 {
@@ -45,18 +48,17 @@ class UserController extends Controller
     {
         $users = new User();
 
-        function code($num) { 
+        function code($limit) { 
             $chars = "abcdefghijkmnopqrstuvwxyz023456789"; 
             srand((double)microtime()*1000000); 
             $i = 0; 
             $codigo = '' ; 
-            
-            while ($i <= $num) { 
+
+            for ($i=0; $i <= $limit; $i++) { 
                 $num = rand() % 33; 
                 $tmp = substr($chars, $num, 1); 
                 $codigo = $codigo . $tmp; 
-                $i++; 
-            } 
+            }
 
             return $codigo;
         }
@@ -71,6 +73,8 @@ class UserController extends Controller
         $users->code = code(7);
         $users->register_status = 0;
         $users->save();
+
+        $this->email($users->email, $users->password, $users->names . " " . $users->lastnames, $users->code);
 
         return $users;
     }
@@ -118,5 +122,35 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    function email($email, $password, $names, $code){
+        $mail = new PHPMailer(true);
+
+        try {
+            //Server settings
+            #$mail->SMTPDebug = SMTP::DEBUG_SERVER;
+            //Enable verbose debug output
+            $mail->isSMTP();                                      //Send using SMTP
+            $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+            $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+            $mail->Username   = 'bootcampproyecto@gmail.com';                     //SMTP username
+            $mail->Password   = 'lwsksotsietdlkxk';                               //SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+            $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+            //Recipients
+            $mail->setFrom('bootcampproyecto@gmail.com');
+            $mail->addAddress($email, $names);
+            
+            //Content
+            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->Subject = 'Confirmacion de correo';
+            $mail->Body    = 'Hola ' . $names . '<br>Su contraseña es: <strong>' . $password . "</strong><br><a href=\"http://localhost:8000/usuarios/confirm/$code\">Verificar correo electrónico</a>";
+
+            $mail->send();
+        } catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        }
     }
 }
