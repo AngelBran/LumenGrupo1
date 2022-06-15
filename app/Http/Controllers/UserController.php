@@ -8,6 +8,7 @@ use App\Models\User;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -28,14 +29,19 @@ class UserController extends Controller
         return $users;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function confirm($code) {
+        $confirm = User::where('code', $code)->get()->first();
+
+        if (empty($confirm)) {
+            return "No existe el código de confirmación";
+        }
+        else {
+            $confirm->code = "";
+            $confirm->register_status = 1;
+            $confirm->save();
+
+            return "Correo electrónico verificado";
+        }
     }
 
     /**
@@ -62,19 +68,21 @@ class UserController extends Controller
 
             return $codigo;
         }
-      
+        
+        $password = code(10);
+
         $users->names = $request->names;
         $users->lastnames = $request->lastnames;
         $users->username = $request->username;
         $users->email = $request->email;
         $users->birthday= $request->birthday;
         $users->phone = $request->phone;
-        $users->password = code(10);
+        $users->password = Hash::make($password);
         $users->code = code(7);
         $users->register_status = 0;
         $users->save();
 
-        $this->email($users->email, $users->password, $users->names . " " . $users->lastnames, $users->code);
+        $this->email($users->email, $password, $users->names . " " . $users->lastnames, $users->code);
 
         return $users;
     }
