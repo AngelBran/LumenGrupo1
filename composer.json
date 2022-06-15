@@ -9,7 +9,8 @@
         "anik/form-request": "^4.5",
         "dusterio/lumen-passport": "^0.3.6",
         "flipbox/lumen-generator": "^9.1",
-        "laravel/lumen-framework": "^9.0"
+        "laravel/lumen-framework": "^9.0",
+        "phpmailer/phpmailer": "^6.6"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
