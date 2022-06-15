@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Http\Requests\RegistroRequest;
 // Email
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -50,8 +51,9 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RegistroRequest $request)
     {
+        $request->validate();
         $users = new User();
 
         function code($limit) { 
@@ -153,8 +155,8 @@ class UserController extends Controller
             
             //Content
             $mail->isHTML(true);                                  //Set email format to HTML
-            $mail->Subject = 'Confirmacion de correo';
-            $mail->Body    = 'Hola ' . $names . '<br>Su contraseña es: <strong>' . $password . "</strong><br><a href=\"http://localhost:8000/usuarios/confirm/$code\">Verificar correo electrónico</a>";
+            $mail->Subject = 'Confirma tu correo electrónico';
+            $mail->Body    = 'Hola ' . $names . '<br>Su contraseña es: <strong>' . $password . "</strong><br><a href=\"http://localhost:8000/usuarios/confirm/$code\">Verifica tu correo electrónico</a>";
 
             $mail->send();
         } catch (Exception $e) {
