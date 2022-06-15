@@ -44,16 +44,41 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $users = new User();
+        function Codigo() { 
+            $chars = "abcdefghijkmnopqrstuvwxyz023456789"; 
+            srand((double)microtime()*1000000); 
+            $i = 0; 
+            $codigo = '' ; 
+            while ($i <= 9) { 
+                $num = rand() % 33; 
+                $tmp = substr($chars, $num, 1); 
+                $codigo = $codigo . $tmp; 
+                $i++; 
+                } 
+                return $codigo;
+        }
+        function Password() { 
+            $chars = "abcdefghijkmnopqrstuvwxyz023456789"; 
+            srand((double)microtime()*1000000); 
+            $i = 0; 
+            $password = '' ; 
+            while ($i <= 7) { 
+                $num = rand() % 33; 
+                $tmp = substr($chars, $num, 1); 
+                $password= $password . $tmp;
+                $i++; 
+                } 
+                return $password;
+        }
+      
         $users->names = $request->names;
         $users->lastnames = $request->lastnames;
         $users->username = $request->username;
         $users->email = $request->email;
         $users->birthday= $request->birthday;
         $users->phone = $request->phone;
-
-        $users->password = $request->password;
-        
-        $users->code = $request->code;
+        $users->password = Password();
+        $users->code = Codigo();
         $users->register_status = 0;
         $users->save();
 
