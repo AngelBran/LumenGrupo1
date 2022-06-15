@@ -17,7 +17,9 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-
-$router->get('usuarios',"UserController@index");
-
-$router->post('usuarios/create',"UserController@store");
+# User
+$router->group(['prefix' => 'usuarios'], function() use ($router) {
+    $router->get('/', 'UserController@index');
+    $router->post('/create', 'UserController@store');
+    $router->get('/confirm/{code}', 'UserController@confirm');
+});
