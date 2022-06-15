@@ -1,0 +1,6 @@
+# Detener servidor
+
+php artisan passport:install
+php artisan key:generate
+
+# Ejecutar servidor

@@ -17,6 +17,26 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+#Auth
+$router->group(['prefix' => 'auth'], function () use ($router) {
+    $router->post('/login', [ 
+        'as' => 'auth.login',
+        'uses' => 'UserController@login' 
+    ]);
+    
+    $router->group(['middleware' => 'auth'], function () use ($router) {
+        $router->get('/profile', [ 
+            'as' => 'auth.profile',
+            'uses' => 'UserController@profile' 
+        ]);
+    
+        $router->get('/logout', [ 
+            'as' => 'auth.logout',
+            'uses' => 'UserController@logout' 
+        ]);
+    });
+});
+
 # User
 $router->group(['prefix' => 'usuarios'], function() use ($router) {
     $router->get('/', 'UserController@index');

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Http\Requests\RegistroRequest;
+use App\Http\Requests\LoginRequest;
+use Carbon\Carbon;
 // Email
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -50,8 +53,9 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RegistroRequest $request)
     {
+        $request->validate();
         $users = new User();
 
         function code($limit) { 
@@ -85,6 +89,48 @@ class UserController extends Controller
         $this->email($users->email, $password, $users->names . " " . $users->lastnames, $users->code);
 
         return $users;
+    }
+
+    public function login(LoginRequest $request)
+    {
+        $validated = $request->validated();
+
+        $user = User::where('email', $request->email)->first();
+        
+        if ($user == NULL || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => "Usuario no encontrado. Verifique sus credenciales."
+            ], 401);
+        }
+
+        // $user = $request->user();
+        $tokenResult = $user->createToken('Personal Access Token');
+        $token = $tokenResult->token;
+
+        $token->save();
+
+        return response()->json([
+            'access_token' => $tokenResult->accessToken,
+            'token_type' => 'Bearer',
+            'expires_at' => Carbon::parse(
+                $tokenResult->token->expires_at
+            )->toDateTimeString()
+        ], 200);
+    }
+
+    public function profile(Request $request)
+    {
+        $user = $request->user();
+        return $user;
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+
+        return response()->json([
+            'message' => 'Cierre de sesión exitoso'
+        ], 200);
     }
 
     /**
@@ -153,8 +199,8 @@ class UserController extends Controller
             
             //Content
             $mail->isHTML(true);                                  //Set email format to HTML
-            $mail->Subject = 'Confirmacion de correo';
-            $mail->Body    = 'Hola ' . $names . '<br>Su contraseña es: <strong>' . $password . "</strong><br><a href=\"http://localhost:8000/usuarios/confirm/$code\">Verificar correo electrónico</a>";
+            $mail->Subject = 'Confirma tu correo electrónico';
+            $mail->Body    = 'Hola ' . $names . '<br>Su contraseña es: <strong>' . $password . "</strong><br><a href=\"http://localhost:8000/usuarios/confirm/$code\">Verifica tu correo electrónico</a>";
 
             $mail->send();
         } catch (Exception $e) {
