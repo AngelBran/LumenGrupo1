@@ -1,0 +1,40 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Swagger Test",
+        "license": {
+            "name": "MIT"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000/",
+            "description": "API server"
+        }
+    ],
+    "paths": {
+        "/usuarios": {
+            "get": {
+                "description": "Página de inicio",
+                "operationId": "90a70f9fe889fa61b696cc4e05f064aa",
+                "responses": {
+                    "default": {
+                        "description": "Retorna la lista de usuarios"
+                    }
+                }
+            }
+        },
+        "/usuarios/create": {
+            "post": {
+                "description": "Registra un nuevo usuario",
+                "operationId": "9b56e7e87d25b7712ab9482f0cca504d",
+                "responses": {
+                    "default": {
+                        "description": "Registra un nuevo usuario"
+                    }
+                }
+            }
+        }
+    }
+}
