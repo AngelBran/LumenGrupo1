@@ -14,12 +14,29 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 use Illuminate\Support\Facades\Hash;
 
+/**                                                                                               
+ * Class UserController                                                                              
+ * @package App\Http\Controllers                                                                   
+ * @OA\OpenApi(                                                                                     
+ *     @OA\Info(                                                                                          
+ *         version="1.0.0",                                                                             
+ *         title="Swagger Test",                                                                    
+ *         @OA\License(name="MIT")                                                                  
+ *     ),                                                                                                   
+ *     @OA\Server(                                                                                  
+ *         description="API server",                                                                    
+ *         url="http://127.0.0.1:8000/",                                                                            
+ *     ),                                                                                               
+ * )                                                                                                
+ */                           
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+    /**                                                                                             
+     * @OA\Get(                                                                                         
+     *     path="/usuarios",                                                                                   
+     *     description="Página de inicio",                                                                            
+     *     @OA\Response(response="default", description="Retorna la lista de usuarios")                               
+     * )                                                                                              
      */
     public function index()
     {
@@ -48,11 +65,12 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+    /**                                                                                             
+     * @OA\Post(                                                                                         
+     *     path="/usuarios/create",                                                                                   
+     *     description="Registra un nuevo usuario",                                                                            
+     *     @OA\Response(response="default", description="Registra un nuevo usuario")                               
+     * )                                                                                              
      */
     public function store(RegistroRequest $request)
     {
